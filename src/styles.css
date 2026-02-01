@@ -1,0 +1,13 @@
+/* src/styles.css */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #0f172a; /* A sötét háttérszíned */
+  overflow-x: hidden; /* Vízszintes görgetősáv elkerülése */
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}

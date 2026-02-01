@@ -1,0 +1,195 @@
+<div class="main-container">
+  @if (!gameStarted()) {
+    <div class="setup-card">
+      <h2>Játék beállítása</h2>
+      
+      <div class="setup-columns">
+        
+        <div class="setup-column">
+          <h3 class="column-title">Szabályok</h3>
+          
+          <div class="config-group">
+            <label>Válassz pontszámot:</label>
+            <select [(ngModel)]="settings.gameType" class="game-select">
+              <option [ngValue]="101">101</option>
+              <option [ngValue]="201">201</option>
+              <option [ngValue]="301">301</option>
+              <option [ngValue]="401">401</option>
+              <option [ngValue]="501">501</option>
+              <option [ngValue]="601">601</option>
+              <option [ngValue]="701">701</option>
+            </select>
+          </div>
+
+          <div class="config-group">
+            <label>Kiszálló típusa:</label>
+            <div class="game-types">
+              <button [class.active]="settings.checkoutMode === 'DOUBLE'" 
+                      (click)="settings.checkoutMode = 'DOUBLE'">
+                Double Out
+              </button>
+              <button [class.active]="settings.checkoutMode === 'STRAIGHT'" 
+                      (click)="settings.checkoutMode = 'STRAIGHT'">
+                Straight Out
+              </button>
+            </div>
+          </div>
+
+          <div class="config-grid">
+            <div class="config-group">
+              <label>Szettek:</label>
+              <input type="number" [(ngModel)]="settings.targetSets" min="1">
+            </div>
+            <div class="config-group">
+              <label>Legek:</label>
+              <input type="number" [(ngModel)]="settings.targetLegs" min="1">
+            </div>
+          </div>
+        </div>
+
+        <div class="setup-column">
+          <h3 class="column-title">Játékosok</h3>
+
+          <div class="config-group">
+            <label>Játékosok száma:</label>
+            <div class="player-count-selector">
+              <button [class.active]="setupPlayerNames.length === 1" (click)="updatePlayerCount(1)">1</button>
+              <button [class.active]="setupPlayerNames.length === 2" (click)="updatePlayerCount(2)">2</button>
+              <button [class.active]="setupPlayerNames.length === 3" (click)="updatePlayerCount(3)">3</button>
+              <button [class.active]="setupPlayerNames.length === 4" (click)="updatePlayerCount(4)">4</button>
+            </div>
+          </div>
+
+          <div class="config-group">
+            <label>Játékosok nevei:</label>
+            <div class="name-inputs">
+              @for (name of setupPlayerNames; track $index) {
+                <input type="text" 
+                       [(ngModel)]="setupPlayerNames[$index]" 
+                       placeholder="{{$index + 1}}. Játékos neve">
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button class="primary-btn start-btn" (click)="onStartGame()">MECCS INDÍTÁSA</button>
+    </div>
+  } @else {
+    <div class="scoreboard">
+      @for (player of players(); track player.id) {
+        <div class="player-column" 
+             [class.active-player]="player.id === activePlayer()?.id && !winner()"
+             [class.winner-column]="winner()?.id === player.id">
+          
+          <div class="player-name">{{ player.name }}</div>
+          
+          <div class="set-leg-display">
+            S: {{ player.sets }} | L: {{ player.legs }}
+          </div>
+
+          <div class="current-score">{{ player.currentScore }}</div>
+          
+          @if (player.id === activePlayer()?.id && !winner()) {
+            <div class="checkout-hint">
+              {{ getCheckout(player.currentScore) }}
+            </div>
+          }
+          
+          <div class="leg-avg-display">
+            Leg átlag: {{ player.stats.lastLegAvg }}
+          </div>
+
+          <div class="history-list">
+            <div class="history-items">
+              @for (val of player.history; track $index) {
+                <span>{{ val }}</span>
+              }
+            </div>
+          </div>
+
+          @if (winner()) {
+            <div class="stats-box" [class.winner-box]="winner()?.id === player.id">
+              @if (winner()?.id === player.id) {
+                <h3 class="winner-text">GYŐZTES!</h3>
+              }
+              <p>Meccs átlag: <strong>{{ player.stats.matchAvg }}</strong></p>
+              <p>Max dobás: <strong>{{ player.stats.highestScore }}</strong></p>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    @if (!winner()) {
+      <div class="input-area">
+        <div class="turn-info">
+          Következik: <strong>{{ activePlayer()?.name }}</strong>
+        </div>
+        <input type="number" 
+               [(ngModel)]="turnScore" 
+               (keyup.enter)="onSubmitScore()" 
+               placeholder="Dobott pont" 
+               autofocus>
+        <button class="primary-btn" (click)="onSubmitScore()">DOBÁS</button>
+      </div>
+    } @else {
+      <div class="game-over-controls">
+        <button class="reset-btn" (click)="onReset()">ÚJ JÁTÉK INDÍTÁSA</button>
+      </div>
+    }
+  }
+
+@if (showTwentyGif()) {
+    <div class="gif-overlay">
+      <img src="assets/20.gif" 
+           alt="Nice 20!">
+      <div class="cheer-text">SZÉP HÚSZAS!</div>
+    </div>
+  }
+ @if (showLegWinGif()) {
+    <div class="gif-overlay">
+      <img src="assets/Luke.gif" alt="Győzelem!">
+      <div class="cheer-text" style="color: var(--accent-gold)">LEG GYŐZELEM!</div>
+      <div class="cheer-text" style="color: var(--accent-gold)"> {{ legWinnerName() }}
+      </div>
+    </div>
+  }
+  @if (showBustGif()) {
+    <div class="gif-overlay">
+      <img src="assets/bust.gif" alt="Bust!">
+      <div class="cheer-text" style="color: var(--accent-red)">BESOKALLTÁL!</div>
+    </div>
+  }
+  @if (showHighScoreGif()) {
+    <div class="gif-overlay">
+      <img src="assets/bigger80.gif" alt="Szép dobás!">
+      
+      <div class="cheer-text" style="color: var(--primary-blue)">
+        SZÉP DOBÁS!
+      </div>
+    </div>
+  }
+  @if (showOneEightyGif()) {
+    <div class="gif-overlay">
+      <img src="assets/180.gif" alt="ONE HUNDRED AND EIGHTY!" class="huge-gif">
+      
+      <div class="cheer-text" style="font-size: 4rem; color: #fff; text-shadow: 0 0 20px red;">
+        180!
+      </div>
+    </div>
+  }
+  @if (showMatchWinGif()) {
+    <div class="gif-overlay">
+      <img src="assets/matchwin.gif" alt="MECCS GYŐZELEM!" class="huge-gif">
+      
+      <div class="cheer-text" style="font-size: 4rem; color: var(--accent-gold); text-shadow: 0 0 30px #fff;">
+        MECCS GYŐZELEM!
+      </div>
+      
+      <div class="winner-announce" style="font-size: 3.5rem; color: #fff;">
+        {{ legWinnerName() }}
+      </div>
+    </div>
+  }
+</div>

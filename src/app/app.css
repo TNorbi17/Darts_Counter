@@ -1,0 +1,756 @@
+:host {
+  /* --- Változók és Színpaletta --- */
+  --bg-dark: #0f172a;
+  --bg-gradient: radial-gradient(circle at 50% 0%, #1e293b, #0f172a);
+  
+  --glass-bg: rgba(30, 41, 59, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-blur: blur(12px);
+
+  --primary-blue: #3b82f6;
+  --primary-glow: rgba(59, 130, 246, 0.5);
+  
+  --accent-green: #22c55e;
+  --accent-red: #ef4444;
+  --accent-gold: #fbbf24; /* Új szín a győztesnek */
+  --accent-pink: #ec4899; /* Új szín a checkout-hoz */
+
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+}
+
+/* Globális reset a komponensen belül */
+* {
+  box-sizing: border-box;
+}
+/* ... Az eddigi CSS kód ... */
+
+/* Ezt a blokkot keresd meg és egészítsd ki a 'select'-tel */
+input[type="number"], input[type="text"], select {
+  width: 100%;
+  padding: 12px 15px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--glass-border);
+  text-align: center;
+  border-radius: 12px;
+  color: #fff;
+  font-size: 1.1rem;
+  outline: none;
+  transition: border-color 0.2s;
+  
+  /* Select specifikus megjelenés */
+  appearance: none; /* Eltünteti a gyári nyilat */
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 15px center;
+  background-size: 16px;
+  cursor: pointer;
+}
+
+input[type="number"] { text-align: center; }
+input:focus, select:focus { border-color: var(--primary-blue); }
+
+/* Option elemek (a legördülő lista) stílusa - Sajnos a böngészők ezt korlátozzák,
+   de megadunk egy sötét hátteret, hogy olvasható legyen */
+select option {
+  background-color: #1e293b; /* Sötét háttér a listának */
+  color: #fff;
+  padding: 10px;
+}
+
+
+.main-container {
+
+  background: var(--bg-gradient);
+  color: var(--text-main);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 20px;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* --- HEADER --- */
+.header {
+  width: 100%;
+  max-width: 1100px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+.logo {
+  font-size: 2.5rem;
+  font-weight: 900;
+  letter-spacing: -1px;
+  background: linear-gradient(to right, #fff, var(--primary-blue));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
+
+/* --- SETUP CARD (Beállítások) --- */
+.setup-card {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  padding: 40px;
+  border-radius: 24px;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  animation: slideUp 0.5s ease-out;
+}
+
+.setup-card h2 {
+  font-size: 1.8rem;
+  margin-bottom: 30px;
+  text-align: center;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.config-group { margin-bottom: 25px; }
+
+.config-group label {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Játékmód választó gombok */
+.game-types {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.game-types button {
+  padding: 15px 0;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--glass-border);
+  color: var(--text-muted);
+  border-radius: 12px;
+  font-size: 1.3rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.game-types button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.game-types button.active {
+  background: var(--primary-blue);
+  border-color: var(--primary-blue);
+  color: #fff;
+  box-shadow: 0 0 15px var(--primary-glow);
+}
+
+.config-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+input[type="number"] {
+  width: 100%;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  color: #fff;
+  font-size: 1.2rem;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+input[type="number"]:focus {
+  border-color: var(--primary-blue);
+}
+.gif-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7); /* Sötétített háttér */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Legyen mindennek a tetején */
+  animation: fadeIn 0.3s ease-out;
+  pointer-events: none; /* Átkattintható legyen, ne akassza meg a játékot */
+}
+
+.gif-overlay img {
+  max-width: 80%;
+  max-height: 60vh;
+  border-radius: 20px;
+  box-shadow: 0 0 50px rgba(255, 255, 255, 0.2);
+  animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.cheer-text {
+  font-size: 3rem;
+  font-weight: 900;
+  color: #fff;
+  text-shadow: 0 0 20px var(--primary-blue);
+  margin-top: 20px;
+  animation: slideUp 0.5s ease-out;
+}
+
+/* Animációk */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+
+
+
+/* Erősített szabály a hatalmas GIF-hez */
+.gif-overlay img.huge-gif {
+  width: 60vw !important;  /* A képernyő szélességének 90%-a legyen, akkor is ha a kép kicsi */
+  height: auto !important; /* Az arányok megtartása */
+  max-width: none !important; /* Korlátok eltörlése */
+  max-height: 60vh !important; /* De lógjon le a képernyőről függőlegesen */
+  
+  /* Opcionális: ha nagyon pixeles lenne, ez kicsit elmoshatja (ízlés kérdése) */
+  /* image-rendering: pixelated; */ 
+}
+
+
+
+
+
+
+
+@keyframes popIn {
+  from { transform: scale(0.5); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+/* --- SCOREBOARD --- */
+.scoreboard {
+  display: flex;
+  gap: 30px;
+  width: 100%;
+  max-width: 1000px;
+  justify-content: center;
+  align-items: stretch;
+}
+
+.player-column {
+  flex: 1;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  padding: 30px 20px;
+  border-radius: 24px;
+  text-align: center;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Aktív játékos stílus */
+.player-column.active-player {
+  border-color: var(--primary-blue);
+  background: rgba(59, 130, 246, 0.1);
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5);
+}
+
+/* Győztes stílus */
+.player-column.winner-column {
+  border-color: var(--accent-gold);
+  background: rgba(251, 191, 36, 0.1);
+  box-shadow: 0 0 50px rgba(251, 191, 36, 0.2);
+  z-index: 10;
+}
+
+.player-name {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 5px;
+  color: #fff;
+}
+
+.set-leg-display {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+}
+
+.current-score {
+  font-size: 6rem;
+  font-weight: 800;
+  line-height: 1;
+  margin: 10px 0;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -2px;
+}
+
+/* Checkout Hint (Kiszálló segítség) */
+.checkout-hint {
+  height: 24px; /* Fix magasság, hogy ne ugráljon */
+  font-size: 1rem;
+  color: var(--accent-pink);
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 15px;
+  animation: pulse 2s infinite;
+}
+
+.leg-avg-display {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  background: rgba(0,0,0,0.2);
+  padding: 5px 12px;
+  border-radius: 99px;
+  display: inline-block;
+  margin-bottom: 20px;
+}
+
+/* History (Dobások) */
+.history-list {
+  margin-top: auto; /* Aljára tolja a history-t */
+  background: rgba(0, 0, 0, 0.2);
+  padding: 15px;
+  border-radius: 16px;
+  min-height: 80px;
+}
+
+.history-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+.history-items span {
+  font-family: monospace;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 1.1rem;
+  color: var(--text-muted);
+}
+
+/* --- STATISZTIKA & GYŐZTES BOX --- */
+.stats-box {
+  margin-top: 20px;
+  padding: 15px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.stats-box.winner-box {
+  background: rgba(251, 191, 36, 0.1);
+  border: 1px solid var(--accent-gold);
+}
+
+.winner-text {
+  color: var(--accent-gold);
+  font-size: 1.4rem;
+  font-weight: 900;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.stats-box p {
+  margin: 5px 0;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+}
+
+.stats-box strong { color: #fff; }
+
+/* --- INPUT AREA (Vezérlők) --- */
+.input-area {
+  margin-top: 40px;
+  background: var(--glass-bg);
+  padding: 25px 40px;
+  border-radius: 24px;
+  border: 1px solid var(--glass-border);
+  
+  /* Flexbox trükk a layout-hoz */
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  max-width: 600px;
+  width: 100%;
+}
+
+/* "Következik: X" szöveg */
+.turn-info {
+  flex-basis: 100%; /* Teljes szélesség, felülre kerül */
+  text-align: center;
+  font-size: 1.2rem;
+  color: var(--text-muted);
+  margin-bottom: 5px;
+}
+
+.turn-info strong {
+  color: #fff;
+  font-weight: 700;
+}
+
+.input-area input {
+  width: 180px;
+  height: 80px;
+  font-size: 3rem;
+  font-weight: 800;
+  background: #000;
+  border: 2px solid var(--primary-blue);
+  border-radius: 16px;
+  margin: 0;
+  padding: 0;
+}
+
+.input-area input:focus {
+  box-shadow: 0 0 25px var(--primary-glow);
+}
+
+.primary-btn {
+  height: 80px;
+  padding: 0 40px;
+  background: var(--primary-blue);
+  color: #fff;
+  border: none;
+  border-radius: 16px;
+  font-size: 1.2rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.1s, background 0.2s;
+  text-transform: uppercase;
+}
+
+.primary-btn:hover {
+  background: #2563eb;
+  transform: translateY(-2px);
+}
+
+.primary-btn:active {
+  transform: translateY(1px);
+}
+
+/* Start és Reset gombok */
+.start-btn {
+  width: 100%;
+  height: 60px;
+  margin-top: 20px;
+}
+
+.game-over-controls {
+  margin-top: 40px;
+  text-align: center;
+}
+
+.reset-btn {
+  background: transparent;
+  border: 2px solid var(--accent-red);
+  color: var(--accent-red);
+  padding: 15px 40px;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 1rem;
+}
+
+.reset-btn:hover {
+  background: var(--accent-red);
+  color: #fff;
+}
+
+/* --- ANIMÁCIÓK --- */
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.7; }
+  100% { opacity: 1; }
+}
+
+/* --- MOBIL NÉZET --- */
+@media (max-width: 768px) {
+  .logo { font-size: 1.8rem; }
+  
+  .scoreboard {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .player-column {
+    padding: 20px;
+  }
+  
+  .player-column.active-player {
+    transform: none; /* Mobilon ne ugráljon */
+    border-width: 2px;
+  }
+
+  .current-score { font-size: 4.5rem; }
+
+  .input-area {
+    padding: 20px;
+    flex-direction: column; /* Mobilon egymás alá */
+  }
+
+  .turn-info { flex-basis: auto; }
+  
+  .input-area input {
+    width: 100%;
+    height: 70px;
+    font-size: 2.5rem;
+  }
+  
+  .primary-btn {
+    width: 100%;
+    height: 60px;
+  }
+}
+
+.player-count-selector {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.player-count-selector button {
+  flex: 1;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--glass-border);
+  color: var(--text-muted);
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.player-count-selector button.active {
+  background: var(--primary-blue);
+  color: #fff;
+  border-color: var(--primary-blue);
+}
+
+/* Név beviteli mezők */
+.name-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.name-inputs input {
+  width: 100%;
+  padding: 12px 15px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--glass-border);
+  border-radius: 10px;
+  color: #fff;
+  font-size: 1rem;
+  text-align: left; /* Nevek legyenek balra igazítva */
+}
+
+.name-inputs input:focus {
+  border-color: var(--primary-blue);
+  background: rgba(0, 0, 0, 0.5);
+}
+
+/* Ha több mint 2 játékos van, a scoreboard elrendezés mobilon */
+@media (max-width: 1000px) {
+  .scoreboard {
+    flex-wrap: wrap; /* Engedi új sorba törni a játékosokat */
+  }
+  .player-column {
+    min-width: 300px; /* Minimum szélesség */
+    flex: 1 1 45%; /* Próbáljon meg két oszlopot kitölteni */
+  }
+}
+
+
+.setup-card {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  padding: 40px;
+  border-radius: 24px;
+  width: 100%;
+  max-width: 900px; /* Megnövelve, hogy kiférjen a 2 oszlop */
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  animation: slideUp 0.5s ease-out;
+}
+
+.setup-card h2 {
+  font-size: 2rem;
+  margin-bottom: 30px;
+  text-align: center;
+  font-weight: 800;
+  color: var(--text-main);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+/* ÚJ: Oszlopos elrendezés a setup kártyán belül */
+.setup-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Két egyenlő oszlop */
+  gap: 40px; /* Távolság az oszlopok között */
+  margin-bottom: 20px;
+}
+
+.column-title {
+  font-size: 1.2rem;
+  color: var(--primary-blue);
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--glass-border);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.config-group { margin-bottom: 25px; }
+
+/* ... A többi stílus változatlan marad ... */
+.config-group label {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.game-types {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 2 oszlop a gomboknak */
+  gap: 12px;
+}
+
+/* A játék típus gomboknál módosítottam a repeat(3, 1fr)-t repeat(2, 1fr)-re,
+   hogy jobban nézzen ki a szűkebb oszlopban, vagy maradhat flex is */
+
+.game-types button, .player-count-selector button {
+  padding: 12px 0;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--glass-border);
+  color: var(--text-muted);
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.game-types button:hover, .player-count-selector button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.game-types button.active, .player-count-selector button.active {
+  background: var(--primary-blue);
+  border-color: var(--primary-blue);
+  color: #fff;
+  box-shadow: 0 0 15px var(--primary-glow);
+}
+
+.player-count-selector {
+  display: flex;
+  gap: 10px;
+}
+.player-count-selector button { flex: 1; }
+
+.config-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+/* Név beviteli mezők */
+.name-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+input[type="number"], input[type="text"] {
+  width: 100%;
+  padding: 12px 15px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  color: #fff;
+  font-size: 1.1rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+input[type="number"] { text-align: center; }
+input:focus { border-color: var(--primary-blue); }
+
+.primary-btn {
+  /* ... meglévő stílusok ... */
+  background: var(--primary-blue);
+  color: #fff;
+  border: none;
+  border-radius: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.1s;
+  text-transform: uppercase;
+}
+
+.start-btn { 
+  width: 100%; 
+  height: 70px; 
+  font-size: 1.3rem; 
+  margin-top: 10px;
+  /* Kicsit kiemeljük a gombot */
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); 
+}
+
+/* ... Scoreboard stílusok változatlanul ... */
+/* ... */
+
+/* --- MOBIL NÉZET (Módosítva) --- */
+@media (max-width: 850px) {
+  .setup-columns {
+    grid-template-columns: 1fr; /* Mobilon visszaáll 1 oszlopra */
+    gap: 20px;
+  }
+  
+  .setup-card {
+    padding: 25px;
+    max-width: 500px;
+  }
+  
+  /* ... a többi mobil szabály változatlan ... */
+  .scoreboard { flex-direction: column; align-items: stretch; }
+  .player-column { max-width: 100%; }
+  .current-score { font-size: 4rem; }
+  .input-area { flex-direction: column; }
+  .input-area input { width: 100%; margin-bottom: 10px; }
+  .primary-btn { width: 100%; }
+}
