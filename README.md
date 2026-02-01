@@ -60,3 +60,4 @@ Kövesd ezeket a lépéseket a projekt futtatásához a saját gépeden:
    ```bash
    git clone [https://github.com/FELHASZNALONEV/Darts_Counter.git](https://github.com/FELHASZNALONEV/Darts_Counter.git)
    cd Darts_Counter
+   ng serve
