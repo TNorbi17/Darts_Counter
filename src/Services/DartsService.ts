@@ -140,8 +140,11 @@ export class DartsService {
   }
 
   private updateStats(player: Player) {
-    const totalScore = player.matchHistory.reduce((a, b) => a + b, 0);
-    const avg = player.matchHistory.length > 0 ? totalScore / player.matchHistory.length : 0;
+    // Csak a valódi számokat vesszük figyelembe (a null-t nem)
+    const validThrows = player.matchHistory.filter((val): val is number => val !== null);
+    
+    const totalScore = validThrows.reduce((a, b) => a + b, 0);
+    const avg = validThrows.length > 0 ? totalScore / validThrows.length : 0;
     const currentHigh = player.history.length > 0 ? Math.max(...player.history) : 0;
     
     player.stats = {
@@ -150,17 +153,92 @@ export class DartsService {
       highestScore: Math.max(player.stats.highestScore, currentHigh)
     };
   }
+exportMatchData() {
+    const players = this.players();
+    const settings = this.settings();
+    const winner = this.winner();
+    const date = new Date().toLocaleString('hu-HU');
 
-  private handleLegWin(winner: Player, allPlayers: Player[]) {
+    // 1. RÉSZ: FEJLÉC ADATOK
+    let csv = `DARTS MATCH REPORT\n`;
+    csv += `Dátum;${date}\n`;
+    csv += `Játék típus;${settings.gameType}\n`;
+    csv += `Kiszálló mód;${settings.checkoutMode}\n`;
+    csv += `Győztes;${winner ? winner.name : 'Nincs'}\n\n`;
+
+    // 2. RÉSZ: JÁTÉKOS STATISZTIKÁK
+    csv += `--- STATISZTIKÁK ---\n`;
+    csv += `Név;Szettek;Legek;Meccs Átlag;Max Dobás;Utolsó Leg Átlag\n`;
+    
+    players.forEach(p => {
+      csv += `${p.name};${p.sets};${p.legs};${p.stats.matchAvg};${p.stats.highestScore};${p.stats.lastLegAvg}\n`;
+    });
+    csv += `\n`;
+
+    // 3. RÉSZ: RÉSZLETES DOBÁS TÖRTÉNET
+    csv += `--- DOBÁSOK TÖRTÉNETE ---\n`;
+    
+    // Fejléc a dobásokhoz: "Kör;Játékos1;Játékos2..."
+    const playerNames = players.map(p => p.name).join(';');
+    csv += `Dobás sorszáma;${playerNames}\n`;
+
+    // Megkeressük a leghosszabb dobáslistát
+    const maxThrows = Math.max(...this.players().map(p => p.matchHistory.length));
+
+    for (let i = 0; i < maxThrows; i++) {
+      let row = `${i + 1}`;
+      this.players().forEach(p => {
+        const val = p.matchHistory[i];
+        // Ha null vagy undefined, akkor kötőjel, egyébként a szám
+        const score = (val !== null && val !== undefined) ? val : '-';
+        row += `;${score}`;
+      });
+      csv += `${row}\n`;
+    }
+
+    // Fájlnév generálása: darts_match_ÉÉÉÉHHNN_ÓÓPP.csv
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+    this.downloadFile(csv, `darts_match_${timestamp}.csv`);
+  }
+
+  // Segédfüggvény a letöltés elindításához a böngészőben
+  private downloadFile(content: string, fileName: string) {
+    // UTF-8 BOM hozzáadása, hogy az Excel helyesen kezelje az ékezeteket
+    const bom = '\uFEFF'; 
+    const blob = new Blob([bom + content], { type: 'text/csv;charset=utf-8;' });
+    
+    const link = document.createElement('a');
+    if (link.download !== undefined) {
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', fileName);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  }
+ private handleLegWin(winner: Player, allPlayers: Player[]) {
+    // Statisztikák mentése (ez maradhat a régi logika szerint a history alapján)
     allPlayers.forEach(p => {
       const sum = p.history.reduce((a, b) => a + b, 0);
       const count = p.history.length;
       const legAvg = count > 0 ? Number((sum / count).toFixed(2)) : 0;
-      
-      p.stats = {
-        ...p.stats,
-        lastLegAvg: legAvg
-      };
+      p.stats = { ...p.stats, lastLegAvg: legAvg };
+    });
+
+    // --- ÚJ RÉSZ: MATCH HISTORY SZINKRONIZÁLÁS ---
+    // Megnézzük, hány körből nyert a győztes ebben a legben
+    const winnerThrowsInLeg = winner.history.length;
+
+    allPlayers.forEach(p => {
+      // Ha valaki nem a győztes, és kevesebbet dobott (mert nem került rá sor),
+      // akkor beteszünk egy null-t a matchHistory-ba, hogy a sorok egyezzenek.
+      if (p.id !== winner.id) {
+        if (p.history.length < winnerThrowsInLeg) {
+           p.matchHistory.push(null); 
+        }
+      }
     });
 
     winner.legs++;
@@ -173,11 +251,11 @@ export class DartsService {
     if (winner.sets >= this.settings().targetSets) {
       this.winner.set(winner);
     } else {
+      // Reset
       allPlayers.forEach(p => {
         p.currentScore = this.settings().gameType;
         p.history = []; 
       });
-      
       this.activePlayerIndex.set(allPlayers.findIndex(p => p.id === winner.id));
     }
   }

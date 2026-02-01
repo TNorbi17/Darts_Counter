@@ -5,7 +5,7 @@ export interface Player {
   name: string;
   currentScore: number;
   history: number[]; // Az aktuális leg dobásai
-  matchHistory: number[]; // A teljes meccs dobásai (statisztikához)
+  matchHistory: (number | null)[]; // A teljes meccs dobásai (statisztikához)
   sets: number;
   legs: number;
   stats: {

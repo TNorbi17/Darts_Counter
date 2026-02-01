@@ -112,7 +112,7 @@ export class AppComponent {
            this.showOneEightyGif.set(false);
          }, 7000);
          
-       } else if (scoreVal > 80) {
+       } else if (scoreVal > 80 && scoreVal < 180) {
          
          this.showHighScoreGif.set(true);
          setTimeout(() => {
@@ -124,7 +124,9 @@ export class AppComponent {
 
     this.turnScore = null;
   }
-
+downloadStats() {
+    this.dartsService.exportMatchData();
+  }
   getCheckout(score: number): string {
     return this.dartsService.getCheckoutHint(score);
   }

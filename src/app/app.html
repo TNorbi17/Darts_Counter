@@ -135,6 +135,12 @@
       </div>
     } @else {
       <div class="game-over-controls">
+        <button class="primary-btn" 
+                style="background-color: var(--accent-green); margin-bottom: 20px; width: 100%;" 
+                (click)="downloadStats()">
+          📥 STATISZTIKA LETÖLTÉSE (.CSV)
+        </button>
+
         <button class="reset-btn" (click)="onReset()">ÚJ JÁTÉK INDÍTÁSA</button>
       </div>
     }
