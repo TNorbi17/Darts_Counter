@@ -1,59 +1,62 @@
-# DartsApp
+# 🎯 Darts Counter
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.4.
+A **Darts Counter** egy modern, Angular alapú darts számláló alkalmazás, amely segít nyomon követni a pontszámokat, statisztikákat és a játékmenetet. Reszponzív felülettel és szórakoztató animációkkal teszi élvezetesebbé a játékot.
 
-## Development server
+![Angular](https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
 
-To start a local development server, run:
+## ✨ Funkciók
 
-```bash
-ng serve
-```
+### ⚙️ Játék Beállítások
+- **Dinamikus játékmódok:** Választható pontszámok: `101`, `201`, `301`, `401`, `501`, `601`, `701`.
+- **Kiszálló módok:**
+  - **Double Out:** (Hagyományos) Duplával kell kiszállni, 1 pont maradék esetén "Bust".
+  - **Straight Out:** Sima kiszálló, akár 1-es dobással is nyerhető.
+- **Játékosok kezelése:** 1-től akár 6 játékosig, egyedi nevek megadásával.
+- **Meccs konfiguráció:** Szettek és Legek számának beállítása.
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+### 🎮 Játékmenet
+- **Intelligens számolás:** Automatikus pontlevonás és körváltás.
+- **Valós idejű statisztikák:**
+  - Utolsó Leg átlag.
+  - Meccs átlag.
+  - Legmagasabb dobás.
+- **Kiszálló segítség (Checkout Hint):** Ha kiszállóra érsz (170 alatt), az app javaslatot tesz a dobásokra (pl. T20 T20 BULL).
+- **Hibakezelés:** "Bust" (Besokallás) detektálása a kiválasztott kiszálló szabály alapján.
 
-## Code scaffolding
+### 🎉 Vizuális Élmények (GIF Overlay)
+Az alkalmazás automatikusan GIF animációkat jelenít meg a képernyőn bizonyos eseményekkor:
+- **20 pont:** "Szép húszas!"
+- **80+ pont:** "Szép dobás!"
+- **180:** Speciális, teljes képernyős "ONE HUNDRED AND EIGHTY" animáció.
+- **Leg Győzelem:** Ünneplés a győztes nevével.
+- **Meccs Győzelem:** A végső győztes ünneplése (Arany felirattal).
+- **Bust:** Figyelmeztető animáció besokalláskor.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+---
 
-```bash
-ng generate component component-name
-```
+## 🛠️ Technológiák
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+A projekt a legmodernebb Angular megoldásokat használja:
+- **Keretrendszer:** Angular 17+ (Standalone Components).
+- **State Management:** **Angular Signals** (`signal`, `computed`) a reaktív és nagy teljesítményű állapotkezelésért.
+- **Stílus:** Tiszta CSS3 (SCSS nélkül), CSS változók (`var(--primary-blue)`), Flexbox és Grid layout.
+- **Architektúra:** Service-alapú logika (`DartsService`) elválasztva a megjelenítéstől (`AppComponent`).
 
-```bash
-ng generate --help
-```
+---
 
-## Building
+## 🚀 Telepítés és Futtatás
 
-To build the project run:
+Kövesd ezeket a lépéseket a projekt futtatásához a saját gépeden:
 
-```bash
-ng build
-```
+### Előfeltételek
+- [Node.js](https://nodejs.org/) telepítve legyen.
+- Angular CLI telepítve: `npm install -g @angular/cli`
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+### Lépések
 
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+1. **Klónozd a repót:**
+   ```bash
+   git clone [https://github.com/FELHASZNALONEV/Darts_Counter.git](https://github.com/FELHASZNALONEV/Darts_Counter.git)
+   cd Darts_Counter
